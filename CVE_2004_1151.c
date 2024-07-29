@@ -1,11 +1,11 @@
 int CVE_2004_1151_VULN_sys32_ni_syscall(int call)
 { 
 	struct task_struct *me = current;
-	static char lastcomm[8];
-	if (strcmp(lastcomm, me->comm)) {
+	static char lastcomm[sizeof(me->comm)];
+	if (strncmp(lastcomm, me->comm, sizeof(lastcomm))) {
 	printk(KERN_INFO "IA32 syscall %d from %s not implemented\n", call,
-	       current->comm);
-		strcpy(lastcomm, me->comm); 
+	me->comm);
+	strncpy(lastcomm, me->comm, sizeof(lastcomm));
 	} 
 	return -ENOSYS;	       
 } 
